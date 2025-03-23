@@ -169,3 +169,8 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# generally, if we were working with more private data we'd want this on
+# so keeping it on even though we are working with public data 
+# to demo how it works
+*.csv
