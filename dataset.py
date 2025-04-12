@@ -1,6 +1,7 @@
 import kagglehub 
 import pandas as pd
 import os
+from sklearn import preprocessing
 
 def load_voice_dataset() -> pd.DataFrame:
     """
@@ -19,3 +20,19 @@ def load_voice_dataset() -> pd.DataFrame:
         df.to_csv("./voice.csv")
         print("First 5 records:", df.head())
         return df
+    
+# Perform all the preprocessing steps
+def preprocess_dataset(df) -> pd.DataFrame:
+    df_outlierless = remove_outliers(df)
+    df_normalized = remove_outliers(df_outlierless)
+    return df_normalized
+
+# Take every numeric value in the dataset and normalize it to a value between 0 and 1
+def normalize_dataset(df) -> pd.DataFrame:
+
+    return df
+
+# Remove the outliers from the dataset
+def remove_outliers(df) -> pd.DataFrame:
+    
+    return df
