@@ -17,4 +17,4 @@ def show_plot(df):
   plt.show()
 
 df = load_voice_dataset()
-show_plot(df)
+show_plot(df["MDVP:Fo(Hz)"])

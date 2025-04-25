@@ -1,6 +1,7 @@
 import kagglehub 
+import numpy as np
 import pandas as pd
-import os
+from scipy.stats import zscore
 from sklearn import preprocessing as pre
 
 def load_voice_dataset() -> pd.DataFrame:
@@ -24,8 +25,7 @@ def load_voice_dataset() -> pd.DataFrame:
 # Perform all the preprocessing steps
 def preprocess_dataset(df) -> pd.DataFrame:
     df_outlierless = remove_outliers(df)
-    df_normalized = remove_outliers(df_outlierless)
-    return df_normalized
+    return df_outlierless
 
 # Take every numeric value in the dataset and normalize it to a value between 0 and 1
 def normalize_dataset(df) -> pd.DataFrame:
@@ -37,7 +37,7 @@ def normalize_dataset(df) -> pd.DataFrame:
     min_max_scaler = pre.MinMaxScaler((0, 1))
     # Apply the normalization
     df_normalized = min_max_scaler.fit_transform(df_normalizable)
-
+    print(len(df_normalized))
     # Pack the returned numpy array into a DataFrame, making sure the original labels and indexing carry over
     df_normalized = pd.DataFrame(df_normalized, columns=df_normalizable.columns, index=df_normalizable.index)
     # Merge the normalized dataset with the attributes left out of normalization. This does change the ordering of the attributes, with the ones left out appearing at the front.
@@ -45,6 +45,14 @@ def normalize_dataset(df) -> pd.DataFrame:
     return df_normalized
 
 # Remove the outliers from the dataset
+# https://stackoverflow.com/questions/23199796/detect-and-exclude-outliers-in-a-pandas-dataframe
 def remove_outliers(df) -> pd.DataFrame:
-    
-    return df
+    # Only select numeric columns
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    # Compute z-scores only for numeric columns
+    z_scores = np.abs(zscore(df[numeric_cols]))
+    # Create a mask where all z-scores are less than 3
+    mask = (z_scores < 3).all(axis=1)
+    # Keep rows that satisfy the condition
+    df_outlierless = df[mask]
+    return df_outlierless
