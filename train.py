@@ -8,10 +8,10 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import seaborn as sns
 matplotlib.use('Agg')  # Set non-interactive backend
 import matplotlib.pyplot as plt
-from dataset import load_voice_dataset
+from dataset import load_voice_dataset, preprocess_dataset
 
 # Load dataset
-data = load_voice_dataset()
+data = preprocess_dataset(load_voice_dataset())
 
 # Assume 'status' is the target column (1 = Parkinson's, 0 = healthy)
 X = data.drop(['status', 'name'], axis=1)  # Drop 'status' and 'name'
