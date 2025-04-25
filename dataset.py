@@ -30,7 +30,7 @@ def preprocess_dataset(df) -> pd.DataFrame:
 
 # Take every numeric value in the dataset and normalize it to a value between 0 and 1
 def normalize_dataset(df) -> pd.DataFrame:
-    # Drop the colOumns that dont need to be normalized. static_attributes stores the names of the attributes left out of normalization (strings and binary values)
+    # Drop the columns that dont need to be normalized. static_attributes stores the names of the attributes left out of normalization (strings and binary values)
     static_attributes = ["Unnamed: 0", "name", "status"]
     df_normalizable = df.drop(static_attributes, axis=1)
     
