@@ -4,10 +4,10 @@ import pandas as pd
 from scipy.stats import zscore
 from sklearn import preprocessing as pre
 
+'''
+Loads a dataset from Kaggle and caches it or loads from cache
+'''
 def load_voice_dataset() -> pd.DataFrame:
-    """
-    Loads a dataset from Kaggle and caches it or loads from cache
-    """
     file_path = "./voice.csv"
     try:
         # Load from cache
@@ -22,16 +22,24 @@ def load_voice_dataset() -> pd.DataFrame:
         print("First 5 records:", df.head())
         return df
     
-# Perform all the preprocessing steps
+'''
+Perform all of the preprocessing steps
+'''
 def preprocess_dataset(df) -> pd.DataFrame:
+    # Remove the "Unnamed: 0" column, which is a mirror of the rows' index numbers and unnessary for training
+    df = df.drop(["Unnamed: 0"], axis=1)
+    # Purge the outliers from the dataset
     df_outlierless = remove_outliers(df)
+    # Normalize each value to a number between 0 and 1
     df_normalized = normalize_dataset(df_outlierless)
     return df_normalized
 
-# Take every numeric value in the dataset and normalize it to a value between 0 and 1
+'''
+Take every numeric value in the dataset and normalize it to a value between 0 and 1
+'''
 def normalize_dataset(df) -> pd.DataFrame:
     # Drop the columns that dont need to be normalized. static_attributes stores the names of the attributes left out of normalization (strings and binary values)
-    static_attributes = ["Unnamed: 0", "name", "status"]
+    static_attributes = ["name", "status"]
     df_normalizable = df.drop(static_attributes, axis=1)
     
     # Prep the scaler. MinMaxScaler normalizes all the values to between 0 and 1, using the max and min from each attribute
@@ -45,8 +53,10 @@ def normalize_dataset(df) -> pd.DataFrame:
     df_normalized = pd.concat([df[static_attributes], df_normalized], axis=1)
     return df_normalized
 
-# Remove the outliers from the dataset
-# https://stackoverflow.com/questions/23199796/detect-and-exclude-outliers-in-a-pandas-dataframe
+'''
+Remove the outliers from the dataset
+https://stackoverflow.com/questions/23199796/detect-and-exclude-outliers-in-a-pandas-dataframe
+'''
 def remove_outliers(df) -> pd.DataFrame:
     # Only select numeric columns
     numeric_cols = df.select_dtypes(include=[np.number]).columns
