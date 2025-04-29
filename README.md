@@ -2,7 +2,7 @@
 
 A concise end‑to‑end pipeline that trains and evaluates machine‑learning models on open voice‑recording datasets to predict whether a subject has Parkinson’s disease.
 
-> **NOTE** This project was completed for *CAP 3784 – Introduction to Data Analytics* at the University of North Florida. It is **not** intended for clinical use.
+> This project was completed for *CAP 3784 - Introduction to Data Analytics* at the University of North Florida. It is **not** intended for clinical use.
 
 ---
 
@@ -14,7 +14,7 @@ A concise end‑to‑end pipeline that trains and evaluates machine‑learning m
 | **Pre‑processing** | Outliers removed (z‑score > 3) and features scaled with *MinMaxScaler* inside a scikit‑learn `Pipeline`. |
 | **Model** | Random‑Forest classifier (baseline logistic & SVM included for comparison). 5‑fold cross‑validation with fixed random seed for reproducibility. |
 | **Results** | Confusion matrix, ROC‑AUC, F1‑score and feature‑importance plots saved to `/artifacts`. |
-| **App** | `streamlit_app.py` → drag‑and‑drop CSV or manual entry and get PD probability in real time. |
+| **App** | `streamlit_app.py` → get PD probability and see validation stats. |
 
 ---
 
@@ -30,10 +30,10 @@ $ python -m venv .venv && source .venv/bin/activate
 $ pip install -r requirements.txt
 
 # 3. train & evaluate
-$ python src/train.py            # writes model.joblib and metrics.json
+$ python src/train.py            # writes model.joblib
 
 # 4. (optional) launch demo
-$ streamlit run streamlit_app.py
+$ streamlit run src/app.py
 ```
 
 Tested on **Python 3.11**.
@@ -62,7 +62,7 @@ Tested on **Python 3.11**.
 * **Parkinson’s Disease Data Set** – Vikas Ukani, Kaggle.
 * **Parkinson’s Disease Voice Measurements** – Dutta et al., Kaggle.
 
-Both are distributed under CC BY‑NC 4.0; see Kaggle pages for details.
+See Kaggle pages for details.
 
 ---
 
@@ -92,4 +92,4 @@ This repository is released under the **MIT License**. See `LICENSE` for details
 ---
 
 ## Authors
-Kayla Ciego  ·  Andreas Ink  ·  Steven Taylor  ·  Muskan Patel  ·  Zain Malik
+Kayla Ciego - Andreas Ink - Steven Taylor - Muskan Patel - Zain Malik
