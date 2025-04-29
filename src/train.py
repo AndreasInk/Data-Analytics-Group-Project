@@ -48,7 +48,7 @@ best_rf = grid_search.best_estimator_
 
 # Save the trained model for later use
 import joblib
-joblib.dump(best_rf, 'artifacts/model.joblib')
+joblib.dump(best_rf, 'src/artifacts/model.joblib')
 
 # Predictions
 y_pred = best_rf.predict(X_test)
@@ -62,7 +62,7 @@ cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
-plt.savefig('confusion_matrix.png')
+plt.savefig('src/artifacts/confusion_matrix.png')
 plt.close()
 
 # Feature Importance
@@ -70,5 +70,5 @@ feature_importance = pd.Series(best_rf.feature_importances_, index=X.columns)
 feature_importance.nlargest(10).plot(kind='barh')
 plt.title('Top 10 Feature Importance')
 plt.tight_layout()
-plt.savefig('feature_importance.png')
+plt.savefig('src/artifacts/feature_importance.png')
 plt.close()

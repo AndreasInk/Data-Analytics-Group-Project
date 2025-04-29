@@ -45,7 +45,7 @@ def main():
     # Model predictions
     if run_prediction:
         try:
-            model = joblib.load("artifacts/model.joblib")
+            model = joblib.load("src/artifacts/model.joblib")
             st.subheader("Predictions vs Actual")
             # Drop non-numeric columns before prediction
             df_features = df.select_dtypes(include=["number"])
