@@ -8,14 +8,18 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 import seaborn as sns
 matplotlib.use('Agg')  # Set non-interactive backend
 import matplotlib.pyplot as plt
-from dataset import load_voice_dataset, preprocess_dataset
+from dataset import preprocess_dataset, load_voice_dataset
 
-# Load dataset
-data = preprocess_dataset(load_voice_dataset())
+# Load raw dataset and extract target
+raw_df = load_voice_dataset().drop(columns=["Unnamed: 0", "index"], errors="ignore")
+y = raw_df["status"]
 
-# Assume 'status' is the target column (1 = Parkinson's, 0 = healthy)
-X = data.drop(['status', 'name'], axis=1)  # Drop 'status' and 'name'
-y = data['status']  # Target
+# Drop target and any non-feature columns, then preprocess
+feature_df = raw_df.drop(columns=["status", "name"], errors="ignore")
+
+X = preprocess_dataset(feature_df)
+# Align target vector with features after outlier removal
+y = y.loc[X.index]
 
 # Handle missing values for numeric columns only
 X = X.fillna(X.mean())
@@ -42,6 +46,10 @@ grid_search.fit(X_train, y_train)
 # Best model
 best_rf = grid_search.best_estimator_
 
+# Save the trained model for later use
+import joblib
+joblib.dump(best_rf, 'src/artifacts/model.joblib')
+
 # Predictions
 y_pred = best_rf.predict(X_test)
 
@@ -54,7 +62,7 @@ cm = confusion_matrix(y_test, y_pred)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
 plt.xlabel('Predicted')
 plt.ylabel('Actual')
-plt.savefig('confusion_matrix.png')
+plt.savefig('src/artifacts/confusion_matrix.png')
 plt.close()
 
 # Feature Importance
@@ -62,5 +70,5 @@ feature_importance = pd.Series(best_rf.feature_importances_, index=X.columns)
 feature_importance.nlargest(10).plot(kind='barh')
 plt.title('Top 10 Feature Importance')
 plt.tight_layout()
-plt.savefig('feature_importance.png')
+plt.savefig('src/artifacts/feature_importance.png')
 plt.close()
