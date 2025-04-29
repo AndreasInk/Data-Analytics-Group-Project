@@ -15,7 +15,7 @@ def load_voice_dataset() -> pd.DataFrame:
             df = pd.read_csv(f)
             return df
     except:
-         # Load from remote and then cache
+        # Load from remote and then cache
         path = kagglehub.dataset_download("vikasukani/parkinsons-disease-data-set")
         df = pd.read_csv(path + "/parkinsons.data")
         df.to_csv("./voice.csv")
@@ -26,8 +26,8 @@ def load_voice_dataset() -> pd.DataFrame:
 Perform all of the preprocessing steps
 '''
 def preprocess_dataset(df) -> pd.DataFrame:
-    # Remove the "Unnamed: 0" column, which is a mirror of the rows' index numbers and unnessary for training
-    df = df.drop(["Unnamed: 0"], axis=1)
+    # Remove the "Unnamed: 0" column if present
+    df = df.drop(columns=["Unnamed: 0"], errors="ignore")
     # Purge the outliers from the dataset
     df_outlierless = remove_outliers(df)
     # Normalize each value to a number between 0 and 1
@@ -38,24 +38,20 @@ def preprocess_dataset(df) -> pd.DataFrame:
 Take every numeric value in the dataset and normalize it to a value between 0 and 1
 '''
 def normalize_dataset(df) -> pd.DataFrame:
-    # Drop the columns that dont need to be normalized. static_attributes stores the names of the attributes left out of normalization (strings and binary values)
+    # Drop the columns that don't need to be normalized (strings and target)
     static_attributes = ["name", "status"]
-    df_normalizable = df.drop(static_attributes, axis=1)
+    df_normalizable = df.drop(columns=static_attributes, errors="ignore")
     
-    # Prep the scaler. MinMaxScaler normalizes all the values to between 0 and 1, using the max and min from each attribute
+    # Prep the scaler. MinMaxScaler normalizes all the values to between 0 and 1
     min_max_scaler = pre.MinMaxScaler((0, 1))
     # Apply the normalization
-    df_normalized = min_max_scaler.fit_transform(df_normalizable)
-    print(len(df_normalized))
-    # Pack the returned numpy array into a DataFrame, making sure the original labels and indexing carry over
-    df_normalized = pd.DataFrame(df_normalized, columns=df_normalizable.columns, index=df_normalizable.index)
-    # Merge the normalized dataset with the attributes left out of normalization. This does change the ordering of the attributes, with the ones left out appearing at the front.
-    df_normalized = pd.concat([df[static_attributes], df_normalized], axis=1)
+    df_norm_array = min_max_scaler.fit_transform(df_normalizable)
+    # Pack into DataFrame, preserving index and column names
+    df_normalized = pd.DataFrame(df_norm_array, columns=df_normalizable.columns, index=df_normalizable.index)
     return df_normalized
 
 '''
 Remove the outliers from the dataset
-https://stackoverflow.com/questions/23199796/detect-and-exclude-outliers-in-a-pandas-dataframe
 '''
 def remove_outliers(df) -> pd.DataFrame:
     # Only select numeric columns
@@ -65,5 +61,5 @@ def remove_outliers(df) -> pd.DataFrame:
     # Create a mask where all z-scores are less than 3
     mask = (z_scores < 3).all(axis=1)
     # Keep rows that satisfy the condition
-    df_outlierless = df[mask]
+    df_outlierless = df.loc[mask]
     return df_outlierless
