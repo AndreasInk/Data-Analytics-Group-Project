@@ -1,7 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from src.dataset import load_voice_dataset
+from dataset import load_voice_dataset
 
 # Method taken from professor's in-class example
 # Takes a dataframe and plots it as a boxplot

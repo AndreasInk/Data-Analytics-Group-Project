@@ -47,6 +47,7 @@ def normalize_dataset(df) -> pd.DataFrame:
     # Apply the normalization
     df_norm_array = min_max_scaler.fit_transform(df_normalizable)
     # Pack into DataFrame, preserving index and column names
+    # Merge the normalized dataset with the attributes left out of normalization. This does change the ordering of the attributes, with the ones left out appearing at the front.
     df_normalized = pd.DataFrame(df_norm_array, columns=df_normalizable.columns, index=df_normalizable.index)
     return df_normalized
 
